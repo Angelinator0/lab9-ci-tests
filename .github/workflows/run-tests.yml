@@ -1,0 +1,38 @@
+name: Run tests
+
+# Когда запускать: при push и pull request в ветку main,
+# а также вручную с вкладки Actions
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  tests:
+    name: pytest (Ubuntu, Python 3.12)
+    # Операционная система виртуальной машины GitHub
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Get repository code
+        uses: actions/checkout@v7
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Unit tests (lab 6)
+        run: pytest tests/unit -v
+
+      - name: API tests (lab 5)
+        run: pytest tests/api -v
